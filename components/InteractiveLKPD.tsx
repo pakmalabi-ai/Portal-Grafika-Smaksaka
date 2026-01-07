@@ -11,7 +11,8 @@ import {
   Printer,
   MousePointer2,
   User,
-  Save
+  Save,
+  Upload
 } from 'lucide-react';
 
 export const InteractiveLKPD: React.FC = () => {
@@ -473,7 +474,15 @@ export const InteractiveLKPD: React.FC = () => {
               <p className="text-[10px] text-slate-400 italic">"Pilihlah perasaanmu setelah menyelesaikan modul ini."</p>
             </div>
 
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center flex-wrap">
+              <a 
+                href="https://forms.gle/FVW4e5kE1XGh5Nye8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 hover:-translate-y-1 transition-all flex items-center gap-2"
+              >
+                <Upload size={18} /> Unggah Hasil LKPD
+              </a>
               <button 
                 onClick={handlePrintPDF}
                 className="px-6 py-3 bg-primary-600 text-white rounded-xl font-bold shadow-lg shadow-primary-500/30 hover:bg-primary-700 hover:-translate-y-1 transition-all flex items-center gap-2"
