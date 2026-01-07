@@ -11,7 +11,6 @@ import {
   Printer,
   MousePointer2,
   User,
-  Download,
   Save
 } from 'lucide-react';
 
@@ -213,34 +212,6 @@ export const InteractiveLKPD: React.FC = () => {
 
     printWindow.document.write(htmlContent);
     printWindow.document.close();
-  };
-
-  const handleDownloadData = () => {
-    const data = {
-      meta: {
-        title: "LKPD Teknik Grafika",
-        school: "SMK Negeri 1 Kaligondang",
-        date: new Date().toLocaleDateString('id-ID')
-      },
-      student: studentInfo,
-      answers: {
-        activity1_aiAnalysis: aiAnalysis,
-        activity2_tools: selectedTools,
-        activity2_caseStudy: caseStudyAnswer,
-        activity3_workflow: workflowPlan
-      }
-    };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `LKPD_${studentInfo.name.replace(/\s+/g, '_')}_XI_TG.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    alert("Data berhasil diunduh! Silakan kirim file JSON ini kepada Guru.");
   };
 
   return (
@@ -505,15 +476,9 @@ export const InteractiveLKPD: React.FC = () => {
             <div className="flex gap-4 justify-center">
               <button 
                 onClick={handlePrintPDF}
-                className="px-6 py-3 border-2 border-primary-600 text-primary-700 rounded-xl font-bold flex items-center gap-2 hover:bg-primary-50 transition-all"
-              >
-                <Printer size={18} /> Simpan PDF
-              </button>
-              <button 
-                onClick={handleDownloadData}
                 className="px-6 py-3 bg-primary-600 text-white rounded-xl font-bold shadow-lg shadow-primary-500/30 hover:bg-primary-700 hover:-translate-y-1 transition-all flex items-center gap-2"
               >
-                <Download size={18} /> Download LKPD
+                <Printer size={18} /> Simpan PDF
               </button>
             </div>
           </div>
