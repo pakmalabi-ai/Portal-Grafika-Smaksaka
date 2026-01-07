@@ -93,6 +93,128 @@ export const InteractiveLKPD: React.FC = () => {
     }
   };
 
+  const handlePrintPDF = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert("Pop-up diblokir! Izinkan pop-up untuk mencetak.");
+      return;
+    }
+
+    const toolNames = selectedTools.map(tId => {
+      const tool = toolsList.find(t => t.id === tId);
+      return tool ? tool.name : tId;
+    });
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>LKPD - ${studentInfo.name}</title>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #1e293b; max-width: 800px; mx-auto; }
+          .header { border-bottom: 3px solid #4f46e5; padding-bottom: 20px; margin-bottom: 30px; }
+          .header h1 { color: #4f46e5; margin: 0; font-size: 24px; }
+          .header p { margin: 5px 0 0; color: #64748b; font-size: 14px; }
+          
+          .info-box { background: #f1f5f9; padding: 15px; border-radius: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; border: 1px solid #cbd5e1; }
+          .info-item label { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; display: block; }
+          .info-item span { font-weight: bold; font-size: 16px; }
+
+          h2 { font-size: 18px; border-left: 5px solid #4f46e5; padding-left: 10px; margin-top: 30px; background: #eef2ff; padding-top: 5px; padding-bottom: 5px; }
+          
+          .answer-section { margin-bottom: 20px; padding-left: 15px; }
+          .answer-box { background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; white-space: pre-wrap; font-size: 14px; line-height: 1.6; }
+          .answer-box ul { margin: 5px 0; padding-left: 20px; }
+          
+          .workflow-grid { display: grid; gap: 10px; }
+          .workflow-item { background: #f8fafc; padding: 10px; border: 1px dashed #cbd5e1; border-radius: 5px; }
+          .workflow-label { font-weight: bold; color: #4f46e5; font-size: 12px; display: block; margin-bottom: 5px; }
+
+          .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+          
+          @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Lembar Kerja Peserta Didik (LKPD)</h1>
+          <p>Teknik Grafika - SMK Negeri 1 Kaligondang</p>
+        </div>
+
+        <div class="info-box">
+          <div class="info-item">
+            <label>Nama Siswa</label>
+            <span>${studentInfo.name || '(Belum diisi)'}</span>
+          </div>
+          <div class="info-item">
+            <label>Kelas</label>
+            <span>${studentInfo.class}</span>
+          </div>
+          <div class="info-item">
+            <label>Tanggal Pengerjaan</label>
+            <span>${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          </div>
+        </div>
+
+        <h2>Aktivitas 1: Analisis AI (Offset vs Digital)</h2>
+        <div class="answer-section">
+          <div class="answer-box">${aiAnalysis ? aiAnalysis.replace(/\n/g, '<br/>') : '<em style="color:#94a3b8">Jawaban belum diisi</em>'}</div>
+        </div>
+
+        <h2>Aktivitas 2: Inventaris Alat & Studi Kasus</h2>
+        <div class="answer-section">
+          <div class="answer-box">
+            <strong>Alat Post-Press Terpilih:</strong>
+            <ul>
+              ${toolNames.length > 0 ? toolNames.map(n => `<li>${n}</li>`).join('') : '<li>Tidak ada alat dipilih</li>'}
+            </ul>
+            <hr style="border:0; border-top:1px dashed #e2e8f0; margin:15px 0"/>
+            <strong>Analisis Kasus (Die-cutting vs Guillotine):</strong>
+            <p>${caseStudyAnswer ? caseStudyAnswer.replace(/\n/g, '<br/>') : '<em style="color:#94a3b8">Jawaban belum diisi</em>'}</p>
+          </div>
+        </div>
+
+        <h2>Aktivitas 3: Rencana Produksi</h2>
+        <div class="answer-section">
+          <div class="info-box" style="margin-bottom:15px; border: 1px solid #e2e8f0; background: #fff;">
+             <div class="info-item"><label>Produk</label><span>${workflowPlan.product || '-'}</span></div>
+             <div class="info-item"><label>Metode</label><span>${workflowPlan.method || '-'}</span></div>
+          </div>
+          <div class="workflow-grid">
+            <div class="workflow-item">
+              <span class="workflow-label">PRE-PRESS</span>
+              ${workflowPlan.prePress || '-'}
+            </div>
+            <div class="workflow-item">
+              <span class="workflow-label">PRESS</span>
+              ${workflowPlan.press || '-'}
+            </div>
+            <div class="workflow-item">
+              <span class="workflow-label">POST-PRESS</span>
+              ${workflowPlan.postPress || '-'}
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          Dokumen ini digenerate secara otomatis melalui Portal Digital Teknik Grafika.<br/>
+          Guru Pengampu: Malabi Wibowo Susanto, S.Kom.
+        </div>
+
+        <script>
+          window.onload = function() { window.print(); }
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
   const handleDownloadData = () => {
     const data = {
       meta: {
@@ -382,7 +504,7 @@ export const InteractiveLKPD: React.FC = () => {
 
             <div className="flex gap-4 justify-center">
               <button 
-                onClick={() => window.print()}
+                onClick={handlePrintPDF}
                 className="px-6 py-3 border-2 border-primary-600 text-primary-700 rounded-xl font-bold flex items-center gap-2 hover:bg-primary-50 transition-all"
               >
                 <Printer size={18} /> Simpan PDF
